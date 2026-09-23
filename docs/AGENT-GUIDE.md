@@ -35,7 +35,11 @@ hermes plugins install kerrz2020/hermes-rtk-rewrite --enable
 If an old non-git `~/.hermes/plugins/rtk-rewrite` folder exists, back it up and remove it,
 then install again — `hermes plugins update` needs a git source.
 
-### 2. The rtk binary (latest release, checksum verified)
+### 2. The rtk binary (Pinned v0.49.0, checksum verified)
+
+> Pinned release — deliberate. An unpinned "latest" auto-updates an untrusted binary
+> that rewrites every terminal command. Bump `0.49.0` here and in `scripts/update.sh`
+> together, on review/validation.
 
 ```bash
 ARCH="$(uname -m)"
@@ -44,11 +48,10 @@ case "$ARCH" in
   aarch64) A="rtk-aarch64-unknown-linux-gnu.tar.gz" ;;
   *) echo "unsupported arch: $ARCH"; exit 1 ;;
 esac
-LATEST="$(curl -fsSL https://api.github.com/repos/rtk-ai/rtk/releases/latest \
-  | grep -m1 '"tag_name"' | sed -E 's/.*"v([0-9.]+)".*/\1/')"
+V=0.49.0
 TMP="$(mktemp -d)"
-curl -fsSL "https://github.com/rtk-ai/rtk/releases/download/v${LATEST}/${A}" -o "$TMP/rtk.tar.gz"
-EXPECTED="$(curl -fsSL "https://github.com/rtk-ai/rtk/releases/download/v${LATEST}/checksums.txt" \
+curl -fsSL "https://github.com/rtk-ai/rtk/releases/download/v${V}/${A}" -o "$TMP/rtk.tar.gz"
+EXPECTED="$(curl -fsSL "https://github.com/rtk-ai/rtk/releases/download/v${V}/checksums.txt" \
   | grep "$A" | awk '{print $1}' | head -1)"
 [ "$(sha256sum "$TMP/rtk.tar.gz" | awk '{print $1}')" = "$EXPECTED" ] || { echo "checksum mismatch"; exit 1; }
 tar -xzf "$TMP/rtk.tar.gz" -C "$TMP" && install -m 0755 "$TMP/rtk" "$HOME/.local/bin/rtk"
@@ -67,7 +70,7 @@ so nothing is live until then.
 ## Verify — acceptance criteria (all must be green before reporting "done")
 
 ```bash
-rtk --version                                    # == latest release
+rtk --version                                    # == 0.49.0 (pinned)
 hermes plugins list | grep rtk-rewrite           # enabled + git source
 hermes plugins update rtk-rewrite                # "already up to date"
 grep -A20 '^plugins:' ~/.hermes/config.yaml | grep rtk   # present in plugins.enabled

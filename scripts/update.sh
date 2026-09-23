@@ -4,6 +4,9 @@
 set -euo pipefail
 
 RTK_BIN="${RTK_BIN:-$HOME/.local/bin/rtk}"
+# Pinned release — unpinned "latest" auto-updates an untrusted rewrite binary.
+# Bump deliberately on review/validation; do not return to releases/latest.
+RTK_VERSION="0.49.0"
 ARCH="$(uname -m)"
 case "$ARCH" in
   x86_64) ASSET="rtk-x86_64-unknown-linux-musl.tar.gz" ;;
@@ -11,9 +14,9 @@ case "$ARCH" in
   *) echo "unsupported arch: $ARCH"; exit 1 ;;
 esac
 
-RELEASE_JSON="$(curl -fsSL https://api.github.com/repos/rtk-ai/rtk/releases/latest)"
-LATEST="$(printf '%s' "$RELEASE_JSON" | grep -m1 '"tag_name"' | sed -E 's/.*"v([0-9.]+)".*/\1/')"
-[ -n "$LATEST" ] || { echo "cannot resolve the latest rtk release"; exit 1; }
+# LATEST is pinned (RTK_VERSION above); no "latest" API call — the asset URL and
+# checksum are both resolved against the pinned tag below, so an invalid tag fails there.
+LATEST="${RTK_VERSION}"
 
 CURRENT=""
 if [ -x "$RTK_BIN" ]; then
