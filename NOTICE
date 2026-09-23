@@ -1,0 +1,15 @@
+hermes-rtk-rewrite
+Copyright 2026 kerrz2020 and contributors
+
+This product includes software developed as part of the RTK project
+(https://github.com/rtk-ai/rtk), licensed under the Apache License 2.0:
+
+  - __init__.py                      — mirror of rtk-ai/rtk, hooks/hermes/rtk-rewrite/__init__.py
+  - tests/                           — mirror of rtk-ai/rtk, hooks/hermes/tests/
+  - upstream/plugin.yaml             — copy of rtk-ai/rtk, hooks/hermes/rtk-rewrite/plugin.yaml
+
+The RTK binary itself is not vendored here; it is installed by the user from
+the upstream project's releases and remains under its own license.
+
+This repository is a community (non-official) packaging. It is not affiliated
+with, endorsed by, or maintained by the RTK project.

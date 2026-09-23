@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.DS_Store
+*.tar.gz
+# Private operational run logs — never publish (contain host/user/paths)
+docs/validation/

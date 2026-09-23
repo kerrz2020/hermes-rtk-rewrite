@@ -1,0 +1,44 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Hermes
+        run: |
+          curl -fsSL https://hermes-agent.nousresearch.com/install.sh -o /tmp/hermes-install.sh
+          bash /tmp/hermes-install.sh
+        # The official catalog gate (hermes plugins validate) is what reviewers run
+        # before merging an entry, so CI runs it here too.
+
+      - name: Validate plugin (catalog admission gate)
+        run: |
+          export PATH="$HOME/.hermes/bin:$PATH"
+          test -x "$(command -v hermes)" || hermes --version
+          hermes plugins validate --json . || { echo "plugin validate failed (see ^)"; exit 1; }
+
+      - name: Unit tests
+        run: python3 -m unittest discover -s tests -q
+
+      - name: Shell syntax
+        run: |
+          set -e
+          for f in scripts/*.sh; do bash -n "$f"; done
+
+      - name: Python compile
+        run: |
+          python3 -m py_compile __init__.py tests/*.py
+        # Manifest name/version/description are already asserted by `hermes plugins validate`
+        # above; no separate yaml check needed (avoids a runner PyYAML dependency).
