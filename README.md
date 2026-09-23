@@ -52,8 +52,10 @@ tar -xzf "$TMP/rtk.tar.gz" -C "$TMP" && install -m 0755 "$TMP/rtk" "$HOME/.local
 rm -rf "$TMP"
 rtk --version
 
-# 2. the plugin, from git (git source → `hermes plugins update` works)
-hermes plugins install kerrz2020/hermes-rtk-rewrite --enable
+# 2. the plugin (once the catalog entry is merged, `rtk-ai-plugin` is the install key —
+#    until then, install straight from git; a git source keeps `hermes plugins update` working)
+hermes plugins install rtk-ai-plugin --enable
+#   (or, pre-merge: hermes plugins install kerrz2020/hermes-rtk-rewrite --enable)
 
 # 3. restart the gateway from YOUR shell (never from inside an agent session)
 hermes gateway restart
@@ -99,8 +101,11 @@ hermes-rtk-rewrite/
 └── upstream/plugin.yaml   # upstream manifest copy (reference)
 ```
 
-> The installed plugin directory is `~/.hermes/plugins/rtk-rewrite/` — the manifest name
-> (`rtk-rewrite`) is the install key, the repository name is not.
+> The plugin has two names, by design: the **catalog key** is `rtk-ai-plugin` (what users
+> search and run `hermes plugins install rtk-ai-plugin`), and the **manifest name** is
+> `rtk-rewrite` (what the installed directory and `hermes plugins list` show — every plugin
+> installs under its manifest name; upstream's own `rtk init --agent hermes` writes the same
+> manifest name). Plugin updates use the installed name: `hermes plugins update rtk-rewrite`.
 
 ## Validation
 
