@@ -14,8 +14,8 @@ Environment reference: Ubuntu (kernel 7.0.0), Hermes v0.21.4, Python 3.11, rtk 0
   (`register()` ran in isolation — capability probe ok)
 - declared hooks match registrations (`pre_tool_call`)
 - **security scan: `safe`** (no high/critical findings; the CI workflow's Hermes install
-  step is written as download-then-run precisely to keep the scan at `safe` — a literal
-  `curl | bash` string downgrades it to `caution`)
+  step is written as download-then-run precisely to keep the scan at `safe` — a shell-piped
+  install line in workflow YAML would downgrade it to `caution`)
 - desktop surface: stays inside the plugin SDK surface
 
 ## 2. Unit suite (`python3 -m unittest discover -s tests`)
