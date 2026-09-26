@@ -1,5 +1,5 @@
 name: rtk-rewrite
-version: "1.0.0"
+version: "1.0.1"
 description: >-
   Community (non-official) Hermes plugin that rewrites terminal commands through
   RTK (rtk-ai/rtk, Apache-2.0) before execution, so Hermes sees compact command

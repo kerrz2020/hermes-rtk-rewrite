@@ -1,3 +1,11 @@
+## [1.0.1] — 2026-09-26
+
+- README: pin the manual install snippet to RTK v0.49.0 — the last unpinned
+  `releases/latest` fetch outside `scripts/update.sh`.
+- README: drop the dual-name note. The catalog entry is `rtk-rewrite` (rename requested in
+  review of the catalog PR), so the catalog key, the manifest name and the installed
+  directory are one key.
+
 ## [1.0.0] — 2026-09-23
 
 First public release of the community packaging.

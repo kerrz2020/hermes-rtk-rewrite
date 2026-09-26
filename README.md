@@ -41,8 +41,8 @@ case "$ARCH" in
   aarch64) ASSET="rtk-aarch64-unknown-linux-gnu.tar.gz" ;;
   *) echo "unsupported arch: $ARCH"; exit 1 ;;
 esac
-VERSION="$(curl -fsSL https://api.github.com/repos/rtk-ai/rtk/releases/latest \
-  | grep -m1 '"tag_name"' | sed -E 's/.*"v([0-9.]+)".*/\1/')"
+# pinned release — bump deliberately on review/validation (same pin as scripts/update.sh)
+VERSION="0.49.0"
 TMP="$(mktemp -d)"
 curl -fsSL "https://github.com/rtk-ai/rtk/releases/download/v${VERSION}/${ASSET}" -o "$TMP/rtk.tar.gz"
 EXPECTED="$(curl -fsSL "https://github.com/rtk-ai/rtk/releases/download/v${VERSION}/checksums.txt" \
@@ -52,9 +52,8 @@ tar -xzf "$TMP/rtk.tar.gz" -C "$TMP" && install -m 0755 "$TMP/rtk" "$HOME/.local
 rm -rf "$TMP"
 rtk --version
 
-# 2. the plugin (once the catalog entry is merged, `rtk-ai-plugin` is the install key —
-#    until then, install straight from git; a git source keeps `hermes plugins update` working)
-hermes plugins install rtk-ai-plugin --enable
+# 2. the plugin (`rtk-rewrite` is the catalog key and the manifest name — one install key)
+hermes plugins install rtk-rewrite --enable
 #   (or, pre-merge: hermes plugins install kerrz2020/hermes-rtk-rewrite --enable)
 
 # 3. restart the gateway from YOUR shell (never from inside an agent session)
@@ -70,7 +69,7 @@ enabled plugin needs that restart before it is live.
 bash ~/.hermes/plugins/rtk-rewrite/scripts/update.sh
 ```
 
-Checksum-verified binary update when a newer RTK release exists, then
+Checksum-verified update to the pinned RTK release when the installed `rtk` differs, then
 `hermes plugins update rtk-rewrite`. Silent when everything is already current, so it is safe
 in an unattended cron job.
 
@@ -101,11 +100,10 @@ hermes-rtk-rewrite/
 └── upstream/plugin.yaml   # upstream manifest copy (reference)
 ```
 
-> The plugin has two names, by design: the **catalog key** is `rtk-ai-plugin` (what users
-> search and run `hermes plugins install rtk-ai-plugin`), and the **manifest name** is
-> `rtk-rewrite` (what the installed directory and `hermes plugins list` show — every plugin
-> installs under its manifest name; upstream's own `rtk init --agent hermes` writes the same
-> manifest name). Plugin updates use the installed name: `hermes plugins update rtk-rewrite`.
+> One name, by design: `rtk-rewrite` is the catalog key, the manifest name and the installed
+> directory — `hermes plugins install rtk-rewrite` and `hermes plugins update rtk-rewrite`
+> address the same plugin. Upstream's own `rtk init --agent hermes` writes the same manifest
+> name.
 
 ## Validation
 
